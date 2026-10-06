@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto-Backed Lending | LendFoundry Opportunity &amp; Workflow</title>
+<style>
+  @page { size: A4; margin: 14mm 13mm 15mm; }
+  :root { --ink:#263431; --deep:#193b39; --teal:#39746f; --sage:#dce9e3; --mint:#f1f7f3; --slate:#53686d; --mist:#eef3f2; --sand:#f2eee6; --coral:#f5e8e4; --line:#d5dfdc; --paper:#fff; --muted:#60716d; --blue:#e7eff1; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:#e9eeec; color:var(--ink); font:15px/1.5 "Aptos","Segoe UI",Arial,sans-serif; }
+  a { color:#246b73; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  main { max-width:1120px; margin:0 auto; background:var(--paper); box-shadow:0 15px 50px #193b3920; }
+  .hero { padding:76px 70px 55px; color:white; background:radial-gradient(circle at 84% 8%,#8db0a550 0 22%,transparent 23%),radial-gradient(circle at 100% 100%,#6e9d9250 0 28%,transparent 29%),linear-gradient(135deg,#193b39,#315d5a 74%,#55786d); min-height:455px; display:flex; flex-direction:column; justify-content:space-between; }
+  .eyebrow { text-transform:uppercase; letter-spacing:.23em; font-weight:800; font-size:11px; color:#bbd7d0; }
+  h1 { font:700 clamp(42px,5.2vw,67px)/1.04 "Aptos Display","Segoe UI",Arial,sans-serif; letter-spacing:-.045em; max-width:820px; margin:30px 0 12px; }
+  .hero .subtitle { color:#dfebe8; max-width:750px; font-size:21px; line-height:1.35; margin:0; }
+  .hero-bottom { border-top:1px solid #b3cfca80; padding-top:19px; display:flex; justify-content:space-between; gap:20px; color:#d4e3de; font-size:13px; }
+  .hero-bottom span:last-child { max-width:55%; text-align:right; }
+  nav { position:sticky; top:0; z-index:5; background:#f9fbfacc; backdrop-filter:blur(12px); border-bottom:1px solid var(--line); padding:12px 44px; display:flex; gap:19px; flex-wrap:wrap; font-size:13px; font-weight:700; }
+  nav a { color:var(--slate); }
+  article { padding:8px 70px 65px; }
+  section { scroll-margin-top:70px; margin-top:47px; }
+  h2 { font:700 31px/1.15 "Aptos Display","Segoe UI",Arial,sans-serif; color:var(--deep); letter-spacing:-.035em; margin:0 0 12px; }
+  h3 { font:700 19px/1.25 "Aptos Display","Segoe UI",Arial,sans-serif; color:var(--deep); margin:23px 0 8px; }
+  p { margin:0 0 13px; }
+  .lead { color:#405754; font-size:18px; line-height:1.48; max-width:870px; }
+  .secnum { display:block; font-size:11px; font-weight:900; letter-spacing:.22em; color:var(--teal); text-transform:uppercase; margin-bottom:7px; }
+  .status { display:flex; flex-wrap:wrap; gap:7px; margin:15px 0 22px; }
+  .pill { border-radius:30px; display:inline-block; padding:5px 10px; text-transform:uppercase; letter-spacing:.08em; font-weight:800; font-size:10px; }
+  .confirmed { background:var(--sage); color:#2c5c51; }.proposed { background:var(--blue); color:#315c66; }.open { background:var(--sand); color:#755e35; }.example { background:#eeedf3; color:#665e79; }
+  .ribbon { border-left:4px solid var(--teal); background:var(--mint); border-radius:0 8px 8px 0; padding:16px 19px; margin:18px 0; }
+  .ribbon.amber { border-color:#a47b44; background:#faf6ed; }.ribbon.red { border-color:#a25e52; background:#fbf3f1; }
+  .ribbon strong { color:var(--deep); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:13px; }.grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; }
+  .card { border:1px solid var(--line); border-radius:12px; padding:20px; background:#fff; break-inside:avoid; }
+  .card.tint { background:var(--mint); }.card.blue { background:#f1f5f6; }.card.sand { background:#f8f5ef; }
+  .card h3 { margin:0 0 8px; }.card p:last-child { margin-bottom:0; }
+  .metric { font-size:31px; font-weight:800; line-height:1; color:var(--deep); margin-bottom:11px; }
+  .small { font-size:12px; color:var(--muted); }.caption { font-size:13px; color:var(--muted); margin:8px 0 0; }
+  .diagram { background:#f8faf9; border:1px solid var(--line); border-radius:14px; padding:19px; margin:20px 0; break-inside:avoid; }
+  .diagram .label { font-size:11px; letter-spacing:.17em; text-transform:uppercase; color:var(--teal); font-weight:900; margin:0 0 13px; }
+  .diagram svg { display:block; width:100%; height:auto; }
+  .simple-flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:9px; align-items:stretch; margin:20px 0 7px; }
+  .flow-item { background:var(--mint); border:1px solid #cbded5; border-radius:10px; padding:16px 11px; text-align:center; position:relative; min-height:114px; }
+  .flow-item:not(:last-child):after { content:"→"; color:var(--teal); font-size:26px; font-weight:700; position:absolute; right:-18px; top:37%; z-index:1; }
+  .flow-item b { display:block; color:var(--deep); margin-bottom:7px; }.flow-item span { display:block; color:#55706a; font-size:12px; line-height:1.32; }
+  .example-box { border:1px solid #c8d8d1; background:linear-gradient(135deg,#f4f8f5,#e8f1ed); border-radius:14px; padding:23px; margin:17px 0; }
+  .calc { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0 8px; }.calc div { background:white; border:1px solid #d5e2da; border-radius:9px; padding:15px; }.calc b { display:block; font-size:25px; color:var(--deep); line-height:1.1; }.calc span { font-size:12px; color:var(--muted); }
+  table { width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:17px 0; font-size:13px; }
+  thead th { background:#e8f0ec; color:var(--deep); text-align:left; font-weight:800; }
+  th,td { padding:10px 12px; vertical-align:top; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+  th:last-child,td:last-child { border-right:0; } tr:last-child td { border-bottom:0; } tbody tr:nth-child(even) { background:#fbfcfb; }
+  .tight th,.tight td { padding:8px 10px; }
+  .decision-row { display:grid; grid-template-columns:145px 1fr 1.2fr; gap:10px; border-bottom:1px solid var(--line); padding:13px 0; font-size:14px; }.decision-row strong { color:var(--deep); }
+  .keyline { font-weight:800; color:var(--deep); }.source-list { padding-left:20px; color:#52645f; font-size:12px; }.source-list li { margin-bottom:7px; }
+  .sources { border-top:1px solid var(--line); padding-top:17px; margin-top:40px; }.sources h2 { font-size:20px; }
+  .foot { margin-top:26px; border-top:1px solid var(--line); padding-top:14px; color:#71817c; font-size:12px; }
+  @media (max-width:780px) { .hero { padding:50px 25px 35px; min-height:390px; }.hero-bottom { display:block; } nav { padding:10px 22px; } article { padding:8px 22px 45px; } .grid2,.grid3,.calc { grid-template-columns:1fr; }.simple-flow { grid-template-columns:1fr; }.flow-item:not(:last-child):after { content:"↓"; right:calc(50% - 9px); top:auto; bottom:-25px; }.flow-item { min-height:85px; }.decision-row { grid-template-columns:1fr; gap:2px; } table { display:block; overflow-x:auto; } }
+  @media print { body { background:white; font-size:10pt; } main { box-shadow:none; max-width:none; } nav { display:none; } .hero { padding:19mm 15mm 16mm; height:242mm; min-height:0; page-break-after:always; } .hero-bottom { display:flex; } article { padding:0; } section { margin-top:24px; } h2 { font-size:21pt; } h3 { font-size:13pt; } .lead { font-size:12pt; } .grid2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .grid3,.calc { grid-template-columns:repeat(3,minmax(0,1fr)); } .card,.diagram,.example-box { break-inside:avoid; } table { display:table; overflow:visible; font-size:8.5pt; } th,td { padding:5px 7px; } .simple-flow { grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; } .flow-item { min-height:85px; padding:9px 6px; } .flow-item:not(:last-child):after { content:"→"; right:-16px; top:37%; bottom:auto; } .decision-row { grid-template-columns:145px 1fr 1.2fr; gap:10px; } .page-start { page-break-before:auto; } #journey,#decision { page-break-before:always; } a { color:#246b73; } }
+</style>
+</head>
+<body><main>
+<header class="hero">
+  <div><div class="eyebrow">LendFoundry · product opportunity</div><h1>Crypto-backed lending,<br>made understandable.</h1><p class="subtitle">A visual proposal for the customer journey, business model, operating partners and choices needed before launch.</p></div>
+  <div class="hero-bottom"><span>Decision paper · 5 October 2026</span><span>Based on the supplied workflow design and LendFoundry technical proposal</span></div>
+</header>
+<nav aria-label="Sections"><a href="#idea">The idea</a><a href="#compare">What changes</a><a href="#journey">Full workflow</a><a href="#partners">Partners</a><a href="#market">U.S. market</a><a href="#decision">Launch decision</a></nav>
+<article>
+<section id="idea">
+  <span class="secnum">01 / The idea</span><h2>What are we proposing?</h2>
+  <p class="lead">A customer pledges some cryptocurrency as security for a loan and receives cash without first selling that asset. LendFoundry would coordinate the loan journey; a lending partner would provide the money; an approved provider would safeguard the pledged asset.</p>
+  <div class="status"><span class="pill confirmed">Confirmed: existing LendFoundry loan flow</span><span class="pill proposed">Proposed: crypto extension</span><span class="pill open">Open: lender, customer and state</span></div>
+  <div class="simple-flow" aria-label="Crypto lending in five steps"><div class="flow-item"><b>1 · Apply</b><span>Customer asks for a loan and identifies the asset.</span></div><div class="flow-item"><b>2 · Verify</b><span>Identity, location, fraud and asset risks are checked.</span></div><div class="flow-item"><b>3 · Secure</b><span>Approved collateral is placed under agreed control.</span></div><div class="flow-item"><b>4 · Fund</b><span>Lender sends money only after final checks pass.</span></div><div class="flow-item"><b>5 · Service</b><span>Customer repays; the asset is monitored and then returned.</span></div></div>
+  <div class="example-box"><span class="pill example">Simple example · illustrative</span><h3>A $10,000 loan backed by $20,000 of Bitcoin</h3><div class="calc"><div><b>$20,000</b><span>Bitcoin placed as collateral</span></div><div><b>$10,000</b><span>Cash loan to the customer</span></div><div><b>50%</b><span>Starting loan-to-value (LTV): loan ÷ collateral value</span></div></div><p>If the Bitcoin falls to $13,000 and the loan remains $10,000, LTV rises to about 77%. The customer may need to add collateral or repay part of the loan. If risk crosses a contractually defined point, some collateral may be sold. <strong>Those trigger levels have not been chosen.</strong></p></div>
+  <div class="grid3"><div class="card tint"><h3>Why customers care</h3><p>They can access money while retaining exposure to an asset they do not want to sell today.</p></div><div class="card blue"><h3>Why lenders care</h3><p>The pledged asset provides a source of recovery, provided it can be controlled and sold when needed.</p></div><div class="card sand"><h3>Why LendFoundry fits</h3><p>Most of the familiar work already exists: application, decisions, documents, funding and servicing. Crypto adds asset controls and continuous monitoring.</p></div></div>
+</section>
+
+<section id="compare" class="page-start">
+  <span class="secnum">02 / Side by side</span><h2>How is this different from today's LendFoundry loan?</h2>
+  <p>The supplied traditional journey is: <strong>Application → soft credit check → citizenship → Plaid identity → program qualification → hard credit check → DTI and income → offer → e-sign → funding.</strong> A crypto-backed journey retains the loan stages but adds collateral checks before funding and active risk management afterward.</p>
+  <table><thead><tr><th>Question</th><th>Current LendFoundry workflow</th><th>Proposed crypto-backed workflow</th></tr></thead><tbody>
+    <tr><td><strong>Who is the customer?</strong></td><td>Citizenship, Plaid identity and credit information.</td><td>Identity, supported location, sanctions/fraud checks and optional credit or income checks if the selected product requires them.</td></tr>
+    <tr><td><strong>Can we offer a loan?</strong></td><td>Program rules, FICO, income and debt-to-income ratio (DTI).</td><td>Program rules plus supported asset, available collateral, market value and LTV. Credit/DTI may still apply.</td></tr>
+    <tr><td><strong>What must happen before funding?</strong></td><td>Offer accepted, documents signed, final underwriting and bank funding.</td><td>All of those, plus the pledged asset must be received, screened, securely held and revalued immediately before funding.</td></tr>
+    <tr><td><strong>What happens after funding?</strong></td><td>Collect payments and service the loan.</td><td>Collect payments <em>and</em> monitor the asset's value around the clock; warn, accept top-ups, liquidate when legally and contractually allowed, then return remaining collateral at payoff.</td></tr>
+  </tbody></table>
+  <div class="ribbon"><strong>The core difference:</strong> traditional lending focuses heavily on whether the borrower can repay. Crypto-backed lending must also prove that the collateral is real, under control, valuable and sellable throughout the loan.</div>
+</section>
+
+<section id="journey" class="page-start">
+  <span class="secnum">03 / Application flow</span><h2>The complete loan journey</h2>
+  <p>This diagram follows the same decision-and-exception pattern as the supplied flowchart. A review path pauses the journey. A failed check stops it. Every “pass” moves the application toward funding.</p>
+  <div class="diagram"><div class="label">From application to funded loan</div>
+  <svg viewBox="0 0 850 840" role="img" aria-labelledby="flow-title flow-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="flow-title">Crypto-backed loan application flow</title><desc id="flow-desc">Application, identity and compliance decision, product and collateral eligibility decision, offer and signature, collateral deposit, final confirmation decision, funding, and active loan. Review branches appear on the right.</desc>
+    <defs><marker id="arr" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#60857e"/></marker><filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#153d37" flood-opacity=".11"/></filter></defs>
+    <rect x="313" y="18" rx="26" width="225" height="48" fill="#193b39"/><text x="425" y="48" fill="white" text-anchor="middle" font-size="17" font-weight="700">Customer applies</text>
+    <line x1="425" y1="66" x2="425" y2="91" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="258" y="98" rx="11" width="335" height="66" fill="#edf5f0" stroke="#abc7ba" filter="url(#shadow)"/><text x="425" y="124" text-anchor="middle" fill="#193b39" font-size="17" font-weight="700">Application + consent</text><text x="425" y="146" text-anchor="middle" fill="#58716a" font-size="13">Amount, asset, customer and location</text>
+    <line x1="425" y1="164" x2="425" y2="188" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/>
+    <polygon points="425,194 562,251 425,308 288,251" fill="#e5eff1" stroke="#7ba3a7" stroke-width="2"/><text x="425" y="245" text-anchor="middle" fill="#193b39" font-size="16" font-weight="700">Identity + legal</text><text x="425" y="266" text-anchor="middle" fill="#193b39" font-size="16" font-weight="700">eligibility clear?</text>
+    <line x1="562" y1="251" x2="637" y2="251" stroke="#a77952" stroke-width="2.5" marker-end="url(#arr)"/><text x="596" y="240" fill="#8a623c" font-size="12" font-weight="700">NO / REVIEW</text><rect x="646" y="220" width="170" height="62" rx="10" fill="#faf2e9" stroke="#d5ad86"/><text x="731" y="246" text-anchor="middle" fill="#775439" font-size="14" font-weight="700">Pause for review</text><text x="731" y="266" text-anchor="middle" fill="#775439" font-size="12">or decline</text>
+    <line x1="425" y1="308" x2="425" y2="333" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/><text x="439" y="328" fill="#3e7262" font-size="12" font-weight="700">PASS</text>
+    <rect x="258" y="340" rx="11" width="335" height="67" fill="#edf5f0" stroke="#abc7ba" filter="url(#shadow)"/><text x="425" y="365" text-anchor="middle" fill="#193b39" font-size="17" font-weight="700">Check loan + collateral</text><text x="425" y="388" text-anchor="middle" fill="#58716a" font-size="13">Supported asset, balance, price and LTV</text>
+    <line x1="425" y1="407" x2="425" y2="430" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/>
+    <polygon points="425,436 562,491 425,546 288,491" fill="#e5eff1" stroke="#7ba3a7" stroke-width="2"/><text x="425" y="484" text-anchor="middle" fill="#193b39" font-size="16" font-weight="700">Safe, eligible</text><text x="425" y="505" text-anchor="middle" fill="#193b39" font-size="16" font-weight="700">loan amount?</text>
+    <line x1="562" y1="491" x2="637" y2="491" stroke="#a77952" stroke-width="2.5" marker-end="url(#arr)"/><text x="600" y="480" fill="#8a623c" font-size="12" font-weight="700">NO</text><rect x="646" y="460" width="170" height="62" rx="10" fill="#faf2e9" stroke="#d5ad86"/><text x="731" y="486" text-anchor="middle" fill="#775439" font-size="14" font-weight="700">Ask for more asset,</text><text x="731" y="506" text-anchor="middle" fill="#775439" font-size="12">reduce amount or stop</text>
+    <line x1="425" y1="546" x2="425" y2="571" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/><text x="439" y="566" fill="#3e7262" font-size="12" font-weight="700">PASS</text>
+    <rect x="258" y="578" rx="11" width="335" height="65" fill="#edf5f0" stroke="#abc7ba" filter="url(#shadow)"/><text x="425" y="604" text-anchor="middle" fill="#193b39" font-size="17" font-weight="700">Offer + agreement</text><text x="425" y="626" text-anchor="middle" fill="#58716a" font-size="13">Rate, fees, risks and electronic signature</text>
+    <line x1="425" y1="643" x2="425" y2="664" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="258" y="671" rx="11" width="335" height="65" fill="#edf5f0" stroke="#abc7ba" filter="url(#shadow)"/><text x="425" y="697" text-anchor="middle" fill="#193b39" font-size="17" font-weight="700">Customer deposits collateral</text><text x="425" y="719" text-anchor="middle" fill="#58716a" font-size="13">Custodian confirms receipt and screening</text>
+    <line x1="425" y1="736" x2="425" y2="758" stroke="#60857e" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="258" y="765" rx="10" width="335" height="53" fill="#193b39"/><text x="425" y="788" text-anchor="middle" fill="white" font-size="17" font-weight="700">Final price + risk check → fund</text><text x="425" y="806" text-anchor="middle" fill="#d7e9e0" font-size="12">Otherwise hold until resolved</text>
+  </svg><p class="caption">LTV means loan amount divided by eligible collateral value. The specific approval, warning and liquidation thresholds are business decisions.</p></div>
+  <table class="tight"><thead><tr><th>Decision in the diagram</th><th>Checks behind it</th><th>If it cannot pass</th></tr></thead><tbody><tr><td><strong>Identity + eligibility</strong></td><td>Identity, legal location, sanctions and fraud; credit or income only if the chosen product requires them.</td><td>Request more evidence, send to a reviewer or decline.</td></tr><tr><td><strong>Safe loan amount</strong></td><td>Approved asset and network, wallet/deposit risk, available amount, market price, LTV and lender limits.</td><td>Offer less, request more collateral or stop.</td></tr><tr><td><strong>Final funding gate</strong></td><td>Signed terms, confirmed deposit, clear transaction screening, fresh price, final LTV and available lender funds.</td><td>Hold funding until the issue is resolved.</td></tr></tbody></table>
+  <div class="grid2"><div class="card"><h3>Before funding</h3><p>Review and stop branches protect the customer and lender. No cash is released until the signed agreement, asset control, compliance result and fresh valuation all agree.</p></div><div class="card"><h3>After funding</h3><p>The loan becomes active. Payments follow the agreed schedule while price changes and the remaining loan balance are monitored continuously.</p></div></div>
+  <div class="diagram"><div class="label">After funding: four possible paths</div>
+  <svg viewBox="0 0 880 350" role="img" aria-label="Active loan monitoring flow" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a2" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8 Z" fill="#60857e"/></marker></defs>
+    <rect x="315" y="15" width="250" height="55" rx="13" fill="#193b39"/><text x="440" y="48" fill="white" text-anchor="middle" font-size="18" font-weight="700">Active loan</text>
+    <line x1="440" y1="70" x2="440" y2="99" stroke="#60857e" stroke-width="3" marker-end="url(#a2)"/>
+    <rect x="263" y="105" width="354" height="55" rx="13" fill="#e8f0ec" stroke="#abc7ba"/><text x="440" y="138" fill="#193b39" text-anchor="middle" font-size="17" font-weight="700">Monitor price + collect payments</text>
+    <line x1="440" y1="160" x2="440" y2="191" stroke="#60857e" stroke-width="3" marker-end="url(#a2)"/>
+    <line x1="82" y1="198" x2="799" y2="198" stroke="#8dad9e" stroke-width="3"/><line x1="82" y1="198" x2="82" y2="224" stroke="#8dad9e" stroke-width="3" marker-end="url(#a2)"/><line x1="321" y1="198" x2="321" y2="224" stroke="#8dad9e" stroke-width="3" marker-end="url(#a2)"/><line x1="559" y1="198" x2="559" y2="224" stroke="#8dad9e" stroke-width="3" marker-end="url(#a2)"/><line x1="799" y1="198" x2="799" y2="224" stroke="#8dad9e" stroke-width="3" marker-end="url(#a2)"/>
+    <rect x="8" y="231" width="150" height="92" rx="10" fill="#eef6ef" stroke="#b4d1bc"/><text x="83" y="259" text-anchor="middle" fill="#274f3f" font-size="15" font-weight="700">Healthy</text><text x="83" y="282" text-anchor="middle" fill="#506a58" font-size="12">Keep servicing</text><text x="83" y="301" text-anchor="middle" fill="#506a58" font-size="12">and monitoring</text>
+    <rect x="246" y="231" width="150" height="92" rx="10" fill="#faf5e9" stroke="#d9c395"/><text x="321" y="259" text-anchor="middle" fill="#755f31" font-size="15" font-weight="700">Price falls</text><text x="321" y="282" text-anchor="middle" fill="#766746" font-size="12">Warn; request more</text><text x="321" y="301" text-anchor="middle" fill="#766746" font-size="12">asset or repayment</text>
+    <rect x="484" y="231" width="150" height="92" rx="10" fill="#f8ece8" stroke="#d6aa9e"/><text x="559" y="259" text-anchor="middle" fill="#825249" font-size="15" font-weight="700">Trigger reached</text><text x="559" y="282" text-anchor="middle" fill="#84645e" font-size="12">Approved collateral</text><text x="559" y="301" text-anchor="middle" fill="#84645e" font-size="12">sale process</text>
+    <rect x="723" y="231" width="150" height="92" rx="10" fill="#eaf0f3" stroke="#b8cbd5"/><text x="798" y="259" text-anchor="middle" fill="#365868" font-size="15" font-weight="700">Paid in full</text><text x="798" y="282" text-anchor="middle" fill="#57707b" font-size="12">Return collateral;</text><text x="798" y="301" text-anchor="middle" fill="#57707b" font-size="12">close loan</text>
+  </svg><p class="caption">If a provider or price feed fails, new funding and irreversible actions pause under an approved incident rule; safe payments and top-ups should remain available where possible.</p></div>
+  <p><strong>If a payment is late:</strong> send the required notice and apply the approved cure/default process. <strong>If the price buffer is breached:</strong> request more collateral or repayment, then use the agreed sale process if the trigger is met. <strong>If a transfer fails:</strong> keep the loan pending, reconcile the records and avoid a duplicate payment or asset release.</p>
+</section>
+
+<section id="roles" class="page-start">
+  <span class="secnum">04 / Who does what</span><h2>A simple operating map</h2>
+  <div class="diagram"><div class="label">The proposed custodial version</div>
+  <svg viewBox="0 0 920 385" role="img" aria-label="Customer, LendFoundry, lender, custodian and service partners" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a3" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0 0 L9 3.5 L0 7 Z" fill="#6d918a"/></marker></defs>
+    <rect x="25" y="115" width="180" height="96" rx="13" fill="#eaf2ed" stroke="#b3cec0"/><text x="115" y="150" text-anchor="middle" font-size="19" font-weight="700" fill="#193b39">Customer</text><text x="115" y="177" text-anchor="middle" font-size="13" fill="#58716a">Applies · pledges asset</text><text x="115" y="196" text-anchor="middle" font-size="13" fill="#58716a">Repays loan</text>
+    <rect x="295" y="106" width="330" height="114" rx="13" fill="#193b39"/><text x="460" y="142" text-anchor="middle" font-size="22" font-weight="700" fill="white">LendFoundry platform</text><text x="460" y="170" text-anchor="middle" font-size="14" fill="#d7ebe4">Application · decisions · documents</text><text x="460" y="192" text-anchor="middle" font-size="14" fill="#d7ebe4">Servicing · alerts · case record</text>
+    <rect x="718" y="34" width="177" height="74" rx="12" fill="#edf3f6" stroke="#b7cbd0"/><text x="806" y="64" text-anchor="middle" font-size="17" font-weight="700" fill="#234d5b">Lending partner</text><text x="806" y="87" text-anchor="middle" font-size="13" fill="#60777e">Provides loan funds</text>
+    <rect x="718" y="126" width="177" height="74" rx="12" fill="#edf5ef" stroke="#b3cec0"/><text x="806" y="155" text-anchor="middle" font-size="17" font-weight="700" fill="#295a48">Custodian</text><text x="806" y="179" text-anchor="middle" font-size="13" fill="#607566">Holds pledged asset</text>
+    <rect x="718" y="218" width="177" height="74" rx="12" fill="#f8f3e9" stroke="#ddcba7"/><text x="806" y="248" text-anchor="middle" font-size="17" font-weight="700" fill="#7a653f">Bank / payments</text><text x="806" y="271" text-anchor="middle" font-size="13" fill="#776c56">Moves USD</text>
+    <rect x="295" y="284" width="330" height="75" rx="12" fill="#f1f5f3" stroke="#c8d9d3"/><text x="460" y="313" text-anchor="middle" font-size="16" font-weight="700" fill="#365c51">Verification + market data partners</text><text x="460" y="338" text-anchor="middle" font-size="13" fill="#61756e">Identity · sanctions · wallet risk · prices</text>
+    <line x1="205" y1="163" x2="286" y2="163" stroke="#6d918a" stroke-width="3" marker-end="url(#a3)"/><line x1="625" y1="145" x2="711" y2="72" stroke="#6d918a" stroke-width="2.5" marker-end="url(#a3)"/><line x1="625" y1="163" x2="711" y2="163" stroke="#6d918a" stroke-width="2.5" marker-end="url(#a3)"/><line x1="625" y1="183" x2="711" y2="253" stroke="#6d918a" stroke-width="2.5" marker-end="url(#a3)"/><line x1="460" y1="220" x2="460" y2="278" stroke="#6d918a" stroke-width="2.5" marker-end="url(#a3)"/>
+  </svg></div>
+  <p class="caption">Information returns to the loan record at every step: verification results, custody deposit confirmation, updated prices, bank settlement and any support or exception decision.</p>
+  <table class="tight"><thead><tr><th>Term</th><th>What it means here</th><th>Needed for proposed MVP?</th></tr></thead><tbody>
+    <tr><td><strong>Blockchain</strong></td><td>The public record that confirms a crypto transfer. The platform checks it alongside the custody provider.</td><td>Yes, as evidence of a native crypto deposit.</td></tr>
+    <tr><td><strong>Custodian / wallet</strong></td><td>A specialist service that controls and protects the pledged asset and executes approved transfers.</td><td>Yes for the proposed custodial model.</td></tr>
+    <tr><td><strong>Price source / oracle</strong></td><td>A service that supplies a current asset price so the loan's safety buffer can be measured.</td><td>Yes; an on-chain oracle is needed only if rules execute on-chain.</td></tr>
+    <tr><td><strong>Smart contract</strong></td><td>Software published to a blockchain that can lock or move assets automatically.</td><td>No for the proposed MVP; evaluate later if self-custody is required.</td></tr>
+  </tbody></table>
+</section>
+
+<section id="partners" class="page-start">
+  <span class="secnum">05 / Partners and verification</span><h2>Which third parties might we use?</h2>
+  <p>Each partner answers a different question. The names below are <strong>options to evaluate, not selected vendors.</strong> LendFoundry retains responsibility for the overall workflow and decision record.</p>
+  <table><thead><tr><th>Business question</th><th>Possible provider options</th><th>How it fits the flow</th></tr></thead><tbody>
+    <tr><td><strong>Is this the right person?</strong></td><td>Socure, Persona, Alloy</td><td>Identity and document checks; step up to ID and selfie when needed. <a href="https://help.socure.com/riskos/docs/document-verification">Socure documents this approach.</a></td></tr>
+    <tr><td><strong>May we serve this person?</strong></td><td>ComplyAdvantage, LSEG World-Check, LexisNexis</td><td>Sanctions and financial crime screening; ambiguous matches go to compliance review.</td></tr>
+    <tr><td><strong>Is this wallet or deposit risky?</strong></td><td>Chainalysis, TRM Labs, Elliptic</td><td>Screen wallet and incoming asset activity before accepting collateral. <a href="https://www.elliptic.co/blockchain-analytics-platform/">Elliptic describes wallet monitoring.</a></td></tr>
+    <tr><td><strong>Who protects the asset?</strong></td><td>BitGo, Coinbase Custody, Anchorage Digital; other qualified options</td><td>Provide custody, transaction controls and deposit confirmation. <a href="https://developers.bitgo.com/docs/wallet-types">BitGo documents custody wallet types.</a></td></tr>
+    <tr><td><strong>What is the asset worth?</strong></td><td>Approved market-data provider; Chainlink or Pyth for on-chain designs</td><td>Supply current prices for offers and ongoing loan monitoring. The pricing method and fallback need approval.</td></tr>
+    <tr><td><strong>Did the transfer happen?</strong></td><td>Custodian plus blockchain node providers such as Alchemy, Infura or QuickNode</td><td>Confirm the right asset and quantity reached the right account on the right network.</td></tr>
+    <tr><td><strong>How do money and documents move?</strong></td><td>Bank/payment partner; DocuSign or approved e-sign provider</td><td>Disburse/collect USD and execute the loan agreement.</td></tr>
+  </tbody></table>
+  <div class="ribbon"><strong>What stays familiar:</strong> Plaid can still help verify a bank account and, if policy requires, income or cash flow. TransUnion can still supply credit data where the loan program calls for it. DocuSign can continue to handle e-signature. None of these alone checks whether a crypto deposit is safe or under control.</div>
+  <h3>Three identity routes, one sensible decision path</h3>
+  <div class="grid3"><div class="card"><div class="metric">01</div><h3>Data match</h3><p>Compare supplied identity details with trusted records. Low friction when results are clear.</p></div><div class="card"><div class="metric">02</div><h3>ID + selfie</h3><p>Ask for a document and live face check when confidence is low or risk is higher.</p></div><div class="card"><div class="metric">03</div><h3>Human review</h3><p>An analyst resolves exceptions before the applicant may continue.</p></div></div>
+  <p class="caption">Proposed route: start with data verification, step up when needed, then manual review. The final policy depends on borrower type and compliance approval.</p>
+</section>
+
+<section id="market" class="page-start">
+  <span class="secnum">06 / U.S. market</span><h2>Who already offers something similar?</h2>
+  <p>These are live product examples, not a complete competitor list. Availability and terms vary by state and can change.</p>
+  <table><thead><tr><th>Company</th><th>What its public material says</th><th>What we learn</th></tr></thead><tbody>
+    <tr><td><strong>Coinbase</strong></td><td>Eligible U.S. customers, excluding New York on its cited page, can borrow USDC against supported crypto through the Morpho protocol. Coinbase says this route has no credit check. <a href="https://help.coinbase.com/en/coinbase/trading-and-funding/loan/loan-intro?country=US&amp;currency=USD">Source</a></td><td>Convenient distribution matters. Its on-chain loan model is different from the proposed custody plus USD model.</td></tr>
+    <tr><td><strong>Unchained</strong></td><td>Markets bitcoin-backed commercial USD loans with collaborative custody and no rehypothecation; its site says availability is state dependent. <a href="https://www.unchained.com/loans">Source</a></td><td>Asset safety, transparency and business borrower focus can be strong selling points.</td></tr>
+    <tr><td><strong>Ledn</strong></td><td>Markets bitcoin-backed loans, with identity verification and jurisdiction-dependent funding options. Its site says availability varies by location. <a href="https://www.ledn.io/bitcoin-backed-loans">Source</a></td><td>Clear collateral, repayment and risk explanations are part of the product experience.</td></tr>
+  </tbody></table>
+  <div class="ribbon amber"><strong>Potential LendFoundry position:</strong> offer lenders a configurable, branded loan journey with their chosen custody, verification and funding partners. This is a proposed position, not yet a proven competitive advantage. Buyer interviews must show that lenders will pay for it.</div>
+</section>
+
+<section id="decision" class="page-start">
+  <span class="secnum">07 / Business decision</span><h2>What would make this worth building?</h2>
+  <div class="grid2"><div class="card tint"><h3>Revenue path A · platform provider</h3><p>An approved lender pays LendFoundry for setup, software usage, each funded loan and/or servicing. The lender supplies capital and holds the credit exposure. <strong>This is the recommended commercial hypothesis to test first.</strong></p></div><div class="card blue"><h3>Revenue path B · lender</h3><p>The lending business receives borrower interest and permitted fees, but must fund loans and absorb funding, credit, collateral and recovery risk. This would need a separate capital and legal decision.</p></div></div>
+  <div class="ribbon"><strong>Economics of one loan:</strong> revenue from agreed platform fees or loan interest <strong>minus</strong> verification, custody, banking, support, capital and expected loss costs = contribution. No real prices, loan sizes or default rates have been approved, so a credible margin estimate requires partner quotes and pilot evidence.</div>
+  <h3>Recommended first release</h3>
+  <div class="grid2"><div class="card"><h3>Include</h3><p>One U.S. borrower segment and approved state set; one lending partner; Bitcoin collateral; regulated third-party custody; USD funding; identity and financial crime checks; clear agreement; price and LTV monitoring; repayment, warning, controlled liquidation and asset return.</p></div><div class="card"><h3>Defer</h3><p>Multiple assets and chains, stablecoin funding, self-custody, proprietary smart contracts, automatic permissionless liquidation, revolving loans and international rollout.</p></div></div>
+  <h3>Decisions before development</h3>
+  <div class="decision-row"><strong>Customer + geography</strong><span>Commercial borrower or consumer? Which U.S. states?</span><span>Determines the legal program, disclosures, checks and market size.</span></div>
+  <div class="decision-row"><strong>Business role</strong><span>Software provider, lender, or referral partner?</span><span>Determines revenue, funding capital, licenses and who bears a loss.</span></div>
+  <div class="decision-row"><strong>Collateral control</strong><span>Which custodian, legal arrangement and no-reuse policy?</span><span>Determines asset safety, customer trust, costs and liquidation rights.</span></div>
+  <div class="decision-row"><strong>Loan rules</strong><span>Amount, rate, term, fees, LTV limits, warning and sale triggers?</span><span>Determines customer cost, approval volume and loss risk.</span></div>
+  <div class="decision-row"><strong>Partners + operations</strong><span>Who provides money, USD transfers, screening and 24×7 response?</span><span>Determines launch feasibility and whether problems can be handled safely.</span></div>
+  <h3>What could stop the project?</h3>
+  <div class="grid3"><div class="card sand"><h3>Regulatory path</h3><p>The exact lender, custodian, state and money flow might require licenses or a partner structure that is unavailable or uneconomic.</p></div><div class="card sand"><h3>Weak demand or margin</h3><p>Customers may prefer an incumbent, and partner costs or acquisition costs may exceed what buyers will pay.</p></div><div class="card sand"><h3>Loss or trust event</h3><p>A fast asset price fall, failed sale, fraud, custody incident or operational error could create loss and damage trust.</p></div></div>
+  <div class="ribbon red"><strong>Recommendation: validate first.</strong> Confirm one customer segment and legal structure, obtain a committed lending partner and indicative vendor prices, test demand with prospective buyers, and simulate a severe price fall. Build a capped pilot only if these checks show a viable customer need, positive contribution and manageable loss exposure.</div>
+</section>
+
+<section class="sources" id="sources"><span class="secnum">Evidence / reading notes</span><h2>What is known, proposed and still open</h2>
+  <p class="small"><strong>Confirmed context:</strong> the traditional LendFoundry steps are from the supplied conversation/design documents. <strong>Proposed design:</strong> the crypto workflow, custody model and MVP are based on the previously prepared technical proposal. <strong>Open decisions:</strong> no vendor, rate, threshold, customer segment, state or legal entity has been approved.</p>
+  <ol class="source-list"><li>Primary internal reference: <a href="Crypto_Lending_LendFoundry_Architecture.html">Crypto-Backed Lending — Product, Workflow &amp; System Architecture</a>, 5 October 2026. The supplied Word design and flowchart informed the workflow presentation.</li><li>Current competitor descriptions: <a href="https://help.coinbase.com/en/coinbase/trading-and-funding/loan/loan-intro?country=US&amp;currency=USD">Coinbase Help</a>; <a href="https://www.unchained.com/loans">Unchained Loans</a>; <a href="https://www.ledn.io/bitcoin-backed-loans">Ledn Loans</a>. Checked 5 October 2026.</li><li>Provider capability examples: <a href="https://help.socure.com/riskos/docs/document-verification">Socure</a>; <a href="https://www.elliptic.co/blockchain-analytics-platform/">Elliptic</a>; <a href="https://developers.bitgo.com/docs/wallet-types">BitGo</a>; <a href="https://docs.chain.link/data-feeds/overview">Chainlink</a>.</li><li>U.S. risk context: <a href="https://ofac.treasury.gov/faqs/560">OFAC digital currency FAQ</a> and <a href="https://www.fincen.gov/resources/statutes-regulations/guidance/application-fincens-regulations-persons-administering">FinCEN virtual currency guidance</a>. The product's actual obligations require counsel to review its specific roles and funds flow.</li></ol>
+  <div class="foot">Decision-support proposal · LendFoundry · 5 October 2026</div>
+</section>
+</article></main></body></html>
