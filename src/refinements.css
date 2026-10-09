@@ -8,6 +8,7 @@
 .form-stack{gap:12px}.form-section{padding:24px 26px}.form-section-head{margin-bottom:20px;gap:15px}
 .form-section-head>span{width:36px;height:36px;font-size:11px;flex:0 0 auto}.form-section-head h2{font-size:21px;font-weight:600}.form-section-head p{font-size:13px;line-height:1.45}
 .form-grid{gap:18px 20px}.field{gap:8px;font-size:12px;font-weight:600}.input-wrap{min-height:50px;padding:0 14px}.input-wrap input,.input-wrap select{height:48px;font-size:14px}.input-wrap i,.input-wrap em{font-size:13px}
+.input-wrap:has(input[readonly]){background:#eef2ef;border-color:#d4ddd8;box-shadow:none}.input-wrap input[readonly]{color:#415760;cursor:not-allowed}.input-wrap input[readonly]::-webkit-inner-spin-button,.input-wrap input[readonly]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .asset-selector button{min-height:70px;padding:14px}.asset-selector button b{font-size:13px}.asset-selector button small{font-size:11px}
 .consent-list label{padding:13px 16px}.consent-list b{font-size:13px}.consent-list small{font-size:11px;line-height:1.45}.form-submit p{font-size:12px;line-height:1.4}
 .offer-later-note{margin-top:18px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;color:var(--green);background:var(--green-soft);border-left:3px solid var(--green);border-radius:6px}.offer-later-note p{margin:0}.offer-later-note b,.offer-later-note span{display:block}.offer-later-note b{font-size:13px}.offer-later-note span{margin-top:4px;color:#58736a;font-size:12px;line-height:1.5}

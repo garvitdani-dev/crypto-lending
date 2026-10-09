@@ -40,7 +40,11 @@ test('creates unique applications and makes the newest record active', () => {
 
   assert.notEqual(second.application.id, original.application.id)
   assert.notEqual(third.application.id, second.application.id)
-  assert.equal(applicationService.list().length, 3)
+  assert.deepEqual(applicationService.list().map((application) => application.application.id), [
+    third.application.id,
+    second.application.id,
+    original.application.id,
+  ])
   assert.equal(applicationService.load().application.id, third.application.id)
   assert.equal(third.application.lfStatus, 'Lead')
 })

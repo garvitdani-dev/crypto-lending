@@ -1,4 +1,4 @@
-import { createInitialState, demoTimestamp } from '../domain.js'
+import { createInitialState, demoDate, demoTimestamp, offsetDate } from '../domain.js'
 import { prepareCurrentVerificationEvidence, synchronizeVerificationWorkflow } from '../verificationWorkflow.js'
 
 export const LEGACY_APPLICATION_STORAGE_KEY = 'lf-crypto-studio-v8'
@@ -10,6 +10,14 @@ const clone = (value) => JSON.parse(JSON.stringify(value))
 
 function normalizeApplication(application) {
   if (!isApplication(application)) return null
+  const currentTimestamp = demoTimestamp()
+  const legacyAmlDocument = application.documents.find((document) => document.id === 'DOC-AML-001')
+  if (legacyAmlDocument?.uploadedAt === '05 Oct 2026 · 09:42 AM IST') legacyAmlDocument.uploadedAt = currentTimestamp
+  if (application.collateral.priceUpdatedAt === 'Reference snapshot · 07 Oct 2026') application.collateral.priceUpdatedAt = currentTimestamp
+  application.collateral.priceSource ||= 'Saved fallback rate'
+  application.collateral.priceStatus ||= 'FALLBACK'
+  if (application.loan?.nextPayment === '05 Nov 2026') application.loan.nextPayment = demoDate(offsetDate(30))
+  if (application.offer?.expiresAt === '12 Oct 2026 · 11:59 PM IST') application.offer.expiresAt = demoTimestamp(offsetDate(3))
   synchronizeVerificationWorkflow(application)
   prepareCurrentVerificationEvidence(application)
   if (application.offer?.options?.length && application.application.workflowIndex === 9 && !application.offer.selectedId) {
@@ -62,6 +70,16 @@ function nextApplicationIdentity(applications) {
   }
 }
 
+function applicationSequence(application) {
+  const match = application.application.id.match(/^CRL-(\d{4})-(\d+)$/)
+  if (!match) return 0
+  return Number(match[1]) * 1_000_000_000 + Number(match[2])
+}
+
+function newestApplicationsFirst(applications) {
+  return [...applications].sort((left, right) => applicationSequence(right) - applicationSequence(left))
+}
+
 export const applicationService = {
   load() {
     const applications = readRegistry()
@@ -72,7 +90,7 @@ export const applicationService = {
   },
 
   list() {
-    return clone(readRegistry())
+    return clone(newestApplicationsFirst(readRegistry()))
   },
 
   save(application) {

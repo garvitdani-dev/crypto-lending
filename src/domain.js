@@ -59,7 +59,7 @@ export const INTEGRATIONS = [
   ['Wallet', 'WalletConnect Mock', 'Ownership authorization'],
   ['Blockchain RPC', 'Alchemy Sandbox', 'Chain reads and transaction tracking'],
   ['Custody', 'Fireblocks Demo Vault', 'Collateral control'],
-  ['Price oracle', 'Chainlink Mock Feed', 'Market valuation'],
+  ['Market price', 'Coinbase Exchange', 'Live USD market valuation'],
   ['Smart contracts', 'LF Vault Simulator', 'Lock and release instructions'],
   ['E-sign', 'DocuSign Sandbox', 'Agreement evidence'],
   ['Payment rail', 'Circle Sandbox', 'USDC disbursement and repayment'],
@@ -126,11 +126,28 @@ export function getMetrics(state) {
   }
 }
 
-export function demoTimestamp() {
+export function demoTimestamp(date = new Date()) {
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
     hour12: true, timeZone: 'Asia/Kolkata',
-  }).format(new Date()).replace(',', ' ·') + ' IST'
+  }).format(date).replace(',', ' ·').replace(/\b(am|pm)\b/i, (period) => period.toUpperCase()) + ' IST'
+}
+
+export function demoDate(date = new Date()) {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata',
+  }).format(date)
+}
+
+export function offsetDate(days, date = new Date()) {
+  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000)
+}
+
+export function normalizeQuantityInput(value) {
+  const raw = String(value)
+  if (!raw) return ''
+  if (/^0+\.\d*$/.test(raw)) return raw.replace(/^0+(?=\.)/, '0')
+  return raw.replace(/^0+(?=\d)/, '')
 }
 
 export function createInitialState({
@@ -138,11 +155,13 @@ export function createInitialState({
   customerId = 'CUS-884291',
   lfStatus = 'Application Submitted',
 } = {}) {
+  const now = new Date()
+  const currentTimestamp = demoTimestamp(now)
   return {
     application: {
       id: applicationId, customerId, lfStatus, workflowIndex: 0,
       requestedAmount: 50000, loanAsset: 'USDC', purpose: 'Business working capital',
-      createdAt: demoTimestamp(), submittedAt: null, updatedAt: demoTimestamp(), decisionReason: null,
+      createdAt: currentTimestamp, submittedAt: null, updatedAt: currentTimestamp, decisionReason: null,
     },
     borrower: { name: 'Alex Morgan', email: 'alex.morgan@example.com', phone: '+1 (512) 555-0187', address: '1408 West Avenue, Austin, TX 78701', jurisdiction: 'United States · Texas' },
     consent: { identity: true, blockchain: true, electronic: true },
@@ -167,7 +186,7 @@ export function createInitialState({
     },
     documents: [
       { id: 'DOC-KYC-001', type: 'Government-issued ID', name: 'Alex-Morgan-passport-demo.pdf', uploadedAt: 'Awaiting borrower upload', uploadedBy: 'Borrower', status: '', verificationStep: 1, pages: 1 },
-      { id: 'DOC-AML-001', type: 'AML and sanctions report', name: 'aml-screening-demo.pdf', uploadedAt: '05 Oct 2026 · 09:42 AM IST', uploadedBy: 'System', status: 'PENDING', verificationStep: 2, pages: 2 },
+      { id: 'DOC-AML-001', type: 'AML and sanctions report', name: 'aml-screening-demo.pdf', uploadedAt: currentTimestamp, uploadedBy: 'System', status: 'PENDING', verificationStep: 2, pages: 2 },
       { id: 'DOC-WALLET-001', type: 'Wallet ownership evidence', name: 'wallet-signature-evidence.json', uploadedAt: 'Awaiting wallet connection', uploadedBy: 'Borrower', status: '', verificationStep: 3, pages: 1 },
       { id: 'DOC-COLLATERAL-001', type: 'Collateral eligibility report', name: 'asset-eligibility-demo.pdf', uploadedAt: 'Generated after wallet review', uploadedBy: 'System', status: '', verificationStep: 4, pages: 2 },
       { id: 'DOC-BALANCE-001', type: 'Blockchain balance snapshot', name: 'balance-snapshot-demo.json', uploadedAt: 'Generated after eligibility', uploadedBy: 'System', status: '', verificationStep: 5, pages: 1 },
@@ -176,13 +195,13 @@ export function createInitialState({
       { id: 'DOC-PROGRAM-001', type: 'Program qualification', name: 'crypto-flex-qualification-demo.pdf', uploadedAt: 'Generated after risk review', uploadedBy: 'System', status: '', verificationStep: 8, pages: 2 },
     ],
     wallet: { status: 'DISCONNECTED', address: '0x71C7b2A46D0aF3e9F4A8B62dD592731e70F1D8B4', provider: 'WalletConnect Mock', ownership: '', connectedAt: null },
-    collateral: { asset: 'ETH', network: 'Ethereum', quantity: 37, price: 2710, eligible: null, locked: false, released: false, vault: '0xLF28…9A10', availableBalance: 52.54, priceUpdatedAt: 'Reference snapshot · 07 Oct 2026' },
+    collateral: { asset: 'ETH', network: 'Ethereum', quantity: 37, price: 2710, priceSource: 'Saved fallback rate', priceStatus: 'FALLBACK', eligible: null, locked: false, released: false, vault: '0xLF28…9A10', availableBalance: 52.54, priceUpdatedAt: currentTimestamp },
     offer: { status: 'NOT_GENERATED', id: null, version: null, createdAt: null, expiresAt: null, options: [], selectedId: null },
     agreement: { status: 'NOT_SIGNED', version: 'v1.0-demo', signedAt: null, reference: null },
     transaction: { status: 'NOT_STARTED', hash: null, block: null, confirmations: 0, from: null, to: '0xLF28…9A10' },
     funding: { status: 'NOT_READY', reference: null, fundedAt: null },
-    loan: { id: `LN-${applicationId}`, status: 'PENDING', principalOutstanding: 50000, accrualDays: 18, nextPayment: '05 Nov 2026', payments: [] },
+    loan: { id: `LN-${applicationId}`, status: 'PENDING', principalOutstanding: 50000, accrualDays: 18, nextPayment: demoDate(offsetDate(30, now)), payments: [] },
     release: { status: 'NOT_AVAILABLE', hash: null },
-    activity: [{ title: 'Demo application prepared', detail: 'Pre-filled stakeholder scenario created', status: 'COMPLETE', time: demoTimestamp(), ref: applicationId }],
+    activity: [{ title: 'Demo application prepared', detail: 'Pre-filled stakeholder scenario created', status: 'COMPLETE', time: currentTimestamp, ref: applicationId }],
   }
 }
