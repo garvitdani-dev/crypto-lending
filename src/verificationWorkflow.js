@@ -8,7 +8,51 @@ export function hasBorrowerKycEvidence(data) {
     && ['Completed', 'Verified'].includes(data.checks.kyc.liveness)
 }
 
+function hasRecordedDocument(document) {
+  if (!document?.uploadedAt) return false
+  return !/^(Awaiting|Generated after|Generated during)/i.test(document.uploadedAt)
+}
+
+export function hasVerificationEvidence(data, step) {
+  const status = getVerificationStatus(data, step)
+  if (['PASS', 'FAIL', 'REVIEW'].includes(status)) return true
+  if (step === 1) return hasBorrowerKycEvidence(data)
+  if (step === 3) return data.wallet.status === 'CONNECTED'
+  const document = data.documents?.find((item) => item.verificationStep === step)
+  return hasRecordedDocument(document)
+}
+
+export function getMissingEvidenceMessage(data, step) {
+  if (step === 1) return 'The borrower has not uploaded the identity document and completed the liveness check yet.'
+  if (step === 3) return 'The borrower has not connected a wallet for ownership verification yet.'
+  const document = data.documents?.find((item) => item.verificationStep === step)
+  return document?.uploadedBy === 'System'
+    ? 'The verification evidence has not been generated yet. Complete the preceding verification stage first.'
+    : 'The borrower has not submitted the required verification evidence yet.'
+}
+
+export function getVerificationPresentation(data, step) {
+  const status = getVerificationStatus(data, step)
+  const evidenceAvailable = hasVerificationEvidence(data, step)
+  if (!evidenceAvailable) {
+    return {
+      evidenceAvailable: false,
+      status: '',
+      statusLabel: '',
+      description: getMissingEvidenceMessage(data, step),
+    }
+  }
+
+  return {
+    evidenceAvailable: true,
+    status: status || 'PENDING',
+    statusLabel: status === 'PASS' ? 'Passed' : status === 'FAIL' ? 'Failed' : status === 'REVIEW' ? 'Review required' : 'Pending verification',
+    description: ['PASS', 'FAIL'].includes(status) ? 'Decision recorded' : status === 'REVIEW' ? 'Additional review required' : 'Evidence submitted; awaiting verification',
+  }
+}
+
 export function simulateBorrowerKycEvidence(next, submittedAt = demoTimestamp()) {
+  next.checks.kyc.status = 'PENDING'
   next.checks.kyc.document = 'Uploaded'
   next.checks.kyc.liveness = 'Completed'
   next.checks.kyc.evidenceSubmittedAt = submittedAt
@@ -17,7 +61,21 @@ export function simulateBorrowerKycEvidence(next, submittedAt = demoTimestamp())
   if (document) {
     document.uploadedAt = submittedAt
     document.uploadedBy = next.borrower.name
-    document.status = 'REVIEW'
+    document.status = 'PENDING'
+  }
+}
+
+export function simulateBorrowerWalletConnection(next, submittedAt = demoTimestamp()) {
+  next.wallet.status = 'CONNECTED'
+  next.wallet.ownership = 'PENDING'
+  next.wallet.connectedAt = submittedAt
+  next.transaction.from = next.wallet.address
+
+  const document = next.documents.find((item) => item.verificationStep === 3)
+  if (document) {
+    document.uploadedAt = submittedAt
+    document.uploadedBy = next.borrower.name
+    document.status = 'PENDING'
   }
 }
 
@@ -81,6 +139,19 @@ export function synchronizeVerificationWorkflow(next) {
   return true
 }
 
+export function prepareCurrentVerificationEvidence(next, generatedAt = demoTimestamp()) {
+  const step = next.application.workflowIndex
+  if (step < 4 || step > LAST_VERIFICATION_STEP) return false
+  const document = next.documents.find((item) => item.verificationStep === step)
+  if (!document || hasRecordedDocument(document)) return false
+
+  setVerificationDecision(next, step, 'PENDING', generatedAt)
+  document.uploadedAt = generatedAt
+  document.uploadedBy = 'System'
+  document.status = 'PENDING'
+  return true
+}
+
 export function applyVerificationReview(next, {
   step,
   status,
@@ -94,5 +165,8 @@ export function applyVerificationReview(next, {
   const document = next.documents.find((item) => item.verificationStep === step)
   if (document) document.status = status
 
-  if (status === 'PASS') synchronizeVerificationWorkflow(next)
+  if (status === 'PASS') {
+    synchronizeVerificationWorkflow(next)
+    prepareCurrentVerificationEvidence(next, reviewedAt)
+  }
 }

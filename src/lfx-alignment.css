@@ -468,6 +468,12 @@
   font-style: normal;
 }
 
+.bo-activity-panel article > .status {
+  height: 24px;
+  min-height: 24px;
+  align-self: start;
+}
+
 .bo-activity-panel h3,
 .bo-activity-panel p {
   margin: 0;
@@ -499,11 +505,11 @@
 }
 
 .bo-verification-list > div {
-  min-width: 780px;
+  min-width: 0;
   min-height: 58px;
   padding: 8px 12px;
   display: grid;
-  grid-template-columns: 24px minmax(145px, 1.2fr) 64px 58px 90px 118px 104px;
+  grid-template-columns: 24px minmax(138px, 1.2fr) minmax(82px, 0.8fr) 64px 82px minmax(96px, 0.9fr) 88px;
   align-items: center;
   gap: 10px;
   border-bottom: 1px solid #d9dde1;
@@ -569,6 +575,25 @@
   background: var(--lfx-amber);
 }
 
+.bo-disabled-detail {
+  display: inline-flex;
+  cursor: help;
+}
+
+.bo-disabled-detail .button {
+  pointer-events: none;
+}
+
+.bo-evidence-missing-modal {
+  max-width: 460px;
+}
+
+.bo-evidence-missing-modal > div {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .bo-verification-list > div > div:last-child {
   display: flex;
   align-items: center;
@@ -616,6 +641,11 @@
   border: 0;
   font-size: 11px;
   font-weight: 700;
+}
+
+.bo-documents-table > div > button:disabled {
+  color: #929aa2;
+  opacity: 0.65;
 }
 
 .bo-history-table > div {
@@ -1137,6 +1167,17 @@
   .bo-search-form {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .bo-verification-list > div {
+    grid-template-columns: 24px minmax(150px, 1fr) minmax(100px, 0.75fr) 70px 90px;
+  }
+
+  .bo-verification-list > .bo-verification-head > span:nth-child(5),
+  .bo-verification-list > .bo-verification-head > span:nth-child(6),
+  .bo-verification-list > div:not(.bo-verification-head) > span:nth-child(5),
+  .bo-verification-list > div:not(.bo-verification-head) > span:nth-child(6) {
+    display: none;
+  }
 }
 
 @media (max-width: 820px) {
@@ -1294,7 +1335,7 @@
   margin-bottom: 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 16px;
 }
 
@@ -1349,6 +1390,19 @@
 .borrower-application-card:hover {
   background: #f7faf8;
   box-shadow: inset 4px 0 var(--green);
+}
+
+.borrower-application-card + .borrower-application-card {
+  border-top: 1px solid var(--line);
+}
+
+.borrower-application-card.active {
+  background: #f7faf8;
+  box-shadow: inset 4px 0 var(--green);
+}
+
+.hero-actions {
+  flex-wrap: wrap;
 }
 
 .borrower-application-avatar {

@@ -3,7 +3,10 @@ import assert from 'node:assert/strict'
 import { createInitialState } from './domain.js'
 import {
   applyVerificationReview,
+  getVerificationPresentation,
   hasBorrowerKycEvidence,
+  hasVerificationEvidence,
+  simulateBorrowerWalletConnection,
   simulateBorrowerKycEvidence,
   synchronizeVerificationWorkflow,
 } from './verificationWorkflow.js'
@@ -84,8 +87,52 @@ test('borrower simulation uploads identity evidence without approving KYC', () =
   assert.equal(data.checks.kyc.status, 'PENDING')
   assert.equal(data.checks.kyc.document, 'Uploaded')
   assert.equal(data.checks.kyc.liveness, 'Completed')
-  assert.equal(data.documents[0].status, 'REVIEW')
+  assert.equal(data.documents[0].status, 'PENDING')
   assert.equal(data.documents[0].uploadedAt, REVIEWED_AT)
+})
+
+test('missing borrower evidence stays blank and cannot be reviewed', () => {
+  const data = verificationState()
+
+  assert.deepEqual(getVerificationPresentation(data, 1), {
+    evidenceAvailable: false,
+    status: '',
+    statusLabel: '',
+    description: 'The borrower has not uploaded the identity document and completed the liveness check yet.',
+  })
+  assert.equal(hasVerificationEvidence(data, 3), false)
+  assert.equal(getVerificationPresentation(data, 3).statusLabel, '')
+})
+
+test('connecting a wallet submits pending evidence without passing verification', () => {
+  const data = verificationState(3)
+
+  simulateBorrowerWalletConnection(data, REVIEWED_AT)
+
+  assert.equal(data.wallet.status, 'CONNECTED')
+  assert.equal(data.wallet.ownership, 'PENDING')
+  assert.equal(data.wallet.connectedAt, REVIEWED_AT)
+  assert.equal(data.documents[2].status, 'PENDING')
+  assert.equal(data.documents[2].uploadedAt, REVIEWED_AT)
+  assert.equal(getVerificationPresentation(data, 3).statusLabel, 'Pending verification')
+})
+
+test('approving submitted wallet evidence records passed and prepares the next check', () => {
+  const data = verificationState(3)
+  simulateBorrowerWalletConnection(data, REVIEWED_AT)
+
+  applyVerificationReview(data, {
+    step: 3,
+    status: 'PASS',
+    comment: 'Wallet ownership confirmed.',
+    reviewedAt: REVIEWED_AT,
+  })
+
+  assert.equal(getVerificationPresentation(data, 3).statusLabel, 'Passed')
+  assert.equal(data.application.workflowIndex, 4)
+  assert.equal(data.checks.collateral.status, 'PENDING')
+  assert.equal(data.documents[3].status, 'PENDING')
+  assert.equal(data.documents[3].uploadedAt, REVIEWED_AT)
 })
 
 test('requesting additional KYC review preserves borrower evidence', () => {
