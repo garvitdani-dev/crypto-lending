@@ -38,6 +38,7 @@ export const WORKFLOW_STAGES = [
 export const RISK_POLICY = {
   version: 'DEMO-RISK-2026.10',
   maxInitialLtv: 60,
+  intakeMaxLtv: 55,
   warningLtv: 55,
   actionLtv: 65,
   liquidationLtv: 75,
@@ -47,8 +48,8 @@ export const RISK_POLICY = {
 }
 
 export const ASSETS = {
-  ETH: { name: 'Ethereum', symbol: 'ETH', network: 'Ethereum', price: 50000, quantity: 2, contract: 'Native asset', maxLtv: 60, eligible: true },
-  BTC: { name: 'Bitcoin', symbol: 'BTC', network: 'Bitcoin', price: 100000, quantity: 1, contract: 'Native asset', maxLtv: 55, eligible: true },
+  ETH: { name: 'Ethereum', symbol: 'ETH', network: 'Ethereum', price: 2710, quantity: 37, contract: 'Native asset', maxLtv: 60, eligible: true },
+  BTC: { name: 'Bitcoin', symbol: 'BTC', network: 'Bitcoin', price: 86600, quantity: 1.16, contract: 'Native asset', maxLtv: 55, eligible: true },
   USDC: { name: 'USD Coin', symbol: 'USDC', network: 'Ethereum', price: 1, quantity: 100000, contract: '0xA0b8…eB48', maxLtv: 70, eligible: true },
 }
 
@@ -73,6 +74,10 @@ export function calculateCollateralValue(quantity, price) {
 export function calculateLtv(loanValue, collateralValue) {
   if (!collateralValue) return 0
   return (Math.max(0, Number(loanValue) || 0) / collateralValue) * 100
+}
+
+export function isIntakeLtvEligible(ltv) {
+  return Number(ltv) <= RISK_POLICY.intakeMaxLtv
 }
 
 export function calculateBorrowingCapacity(collateralValue, maxLtv = RISK_POLICY.maxInitialLtv) {
@@ -138,7 +143,7 @@ export function createInitialState() {
     borrower: { name: 'Alex Morgan', email: 'alex.morgan@example.com', phone: '+1 (512) 555-0187', address: '1408 West Avenue, Austin, TX 78701', jurisdiction: 'United States · Texas' },
     consent: { identity: true, blockchain: true, electronic: true },
     checks: {
-      kyc: { status: 'PENDING', provider: 'Persona Sandbox', reference: 'KYC-DEMO-78421', document: 'Pending', liveness: 'Pending' },
+      kyc: { status: 'PENDING', provider: 'Persona Sandbox', reference: 'KYC-DEMO-78421', document: 'Pending', liveness: 'Pending', evidenceSubmittedAt: null },
       aml: { status: 'PENDING', sanctions: 'Pending', jurisdiction: 'Pending', walletScreening: 'Pending', reference: 'AML-DEMO-3028' },
       balance: { status: 'PENDING', checkedAt: null },
       collateral: { status: 'PENDING' },
@@ -157,7 +162,7 @@ export function createInitialState() {
       8: { documentId: 'DOC-PROGRAM-001', reviewer: null, reviewedAt: null, comment: '' },
     },
     documents: [
-      { id: 'DOC-KYC-001', type: 'Government-issued ID', name: 'Alex-Morgan-passport-demo.pdf', uploadedAt: '05 Oct 2026 · 09:41 AM IST', uploadedBy: 'Alex Morgan', status: 'PENDING', verificationStep: 1, pages: 1 },
+      { id: 'DOC-KYC-001', type: 'Government-issued ID', name: 'Alex-Morgan-passport-demo.pdf', uploadedAt: 'Awaiting borrower upload', uploadedBy: 'Borrower', status: 'PENDING', verificationStep: 1, pages: 1 },
       { id: 'DOC-AML-001', type: 'AML and sanctions report', name: 'aml-screening-demo.pdf', uploadedAt: '05 Oct 2026 · 09:42 AM IST', uploadedBy: 'System', status: 'PENDING', verificationStep: 2, pages: 2 },
       { id: 'DOC-WALLET-001', type: 'Wallet ownership evidence', name: 'wallet-signature-evidence.json', uploadedAt: 'Awaiting wallet connection', uploadedBy: 'Borrower', status: 'PENDING', verificationStep: 3, pages: 1 },
       { id: 'DOC-COLLATERAL-001', type: 'Collateral eligibility report', name: 'asset-eligibility-demo.pdf', uploadedAt: 'Generated after wallet review', uploadedBy: 'System', status: 'PENDING', verificationStep: 4, pages: 2 },
@@ -167,7 +172,7 @@ export function createInitialState() {
       { id: 'DOC-PROGRAM-001', type: 'Program qualification', name: 'crypto-flex-qualification-demo.pdf', uploadedAt: 'Generated after risk review', uploadedBy: 'System', status: 'PENDING', verificationStep: 8, pages: 2 },
     ],
     wallet: { status: 'DISCONNECTED', address: '0x71C7b2A46D0aF3e9F4A8B62dD592731e70F1D8B4', provider: 'WalletConnect Mock', ownership: 'PENDING' },
-    collateral: { asset: 'ETH', network: 'Ethereum', quantity: 2, price: 50000, eligible: null, locked: false, released: false, vault: '0xLF28…9A10', availableBalance: 2.84, priceUpdatedAt: '05 Oct 2026 · 09:42 AM IST' },
+    collateral: { asset: 'ETH', network: 'Ethereum', quantity: 37, price: 2710, eligible: null, locked: false, released: false, vault: '0xLF28…9A10', availableBalance: 52.54, priceUpdatedAt: 'Reference snapshot · 07 Oct 2026' },
     offer: { status: 'NOT_GENERATED', id: null, version: null, createdAt: null, expiresAt: null, options: [], selectedId: null },
     agreement: { status: 'NOT_SIGNED', version: 'v1.0-demo', signedAt: null, reference: null },
     transaction: { status: 'NOT_STARTED', hash: null, block: null, confirmations: 0, from: null, to: '0xLF28…9A10' },

@@ -1,7 +1,7 @@
 import { createInitialState } from '../domain'
 import { synchronizeVerificationWorkflow } from '../verificationWorkflow'
 
-export const APPLICATION_STORAGE_KEY = 'lf-crypto-studio-v7'
+export const APPLICATION_STORAGE_KEY = 'lf-crypto-studio-v8'
 
 export const applicationService = {
   load() {

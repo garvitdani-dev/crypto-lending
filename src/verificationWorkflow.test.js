@@ -1,7 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createInitialState } from './domain.js'
-import { applyVerificationReview, synchronizeVerificationWorkflow } from './verificationWorkflow.js'
+import {
+  applyVerificationReview,
+  hasBorrowerKycEvidence,
+  simulateBorrowerKycEvidence,
+  synchronizeVerificationWorkflow,
+} from './verificationWorkflow.js'
 
 const REVIEWED_AT = '06 Oct 2026 · 10:46 AM IST'
 
@@ -68,4 +73,32 @@ test('approving the final verification moves the application to Ready for Offer'
 
   assert.equal(data.application.workflowIndex, 9)
   assert.equal(data.application.lfStatus, 'Ready for Offer')
+})
+
+test('borrower simulation uploads identity evidence without approving KYC', () => {
+  const data = verificationState()
+
+  simulateBorrowerKycEvidence(data, REVIEWED_AT)
+
+  assert.equal(hasBorrowerKycEvidence(data), true)
+  assert.equal(data.checks.kyc.status, 'PENDING')
+  assert.equal(data.checks.kyc.document, 'Uploaded')
+  assert.equal(data.checks.kyc.liveness, 'Completed')
+  assert.equal(data.documents[0].status, 'REVIEW')
+  assert.equal(data.documents[0].uploadedAt, REVIEWED_AT)
+})
+
+test('requesting additional KYC review preserves borrower evidence', () => {
+  const data = verificationState()
+  simulateBorrowerKycEvidence(data, REVIEWED_AT)
+
+  applyVerificationReview(data, {
+    step: 1,
+    status: 'REVIEW',
+    comment: 'Please review the uploaded image.',
+    reviewedAt: REVIEWED_AT,
+  })
+
+  assert.equal(hasBorrowerKycEvidence(data), true)
+  assert.equal(data.checks.kyc.status, 'REVIEW')
 })

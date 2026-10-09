@@ -3,6 +3,24 @@ import { demoTimestamp } from './domain.js'
 export const FIRST_VERIFICATION_STEP = 1
 export const LAST_VERIFICATION_STEP = 8
 
+export function hasBorrowerKycEvidence(data) {
+  return ['Uploaded', 'Verified'].includes(data.checks.kyc.document)
+    && ['Completed', 'Verified'].includes(data.checks.kyc.liveness)
+}
+
+export function simulateBorrowerKycEvidence(next, submittedAt = demoTimestamp()) {
+  next.checks.kyc.document = 'Uploaded'
+  next.checks.kyc.liveness = 'Completed'
+  next.checks.kyc.evidenceSubmittedAt = submittedAt
+
+  const document = next.documents.find((item) => item.verificationStep === 1)
+  if (document) {
+    document.uploadedAt = submittedAt
+    document.uploadedBy = next.borrower.name
+    document.status = 'REVIEW'
+  }
+}
+
 export function getVerificationStatus(data, step) {
   if (step === 1) return data.checks.kyc.status
   if (step === 2) return data.checks.aml.status
@@ -18,8 +36,14 @@ export function getVerificationStatus(data, step) {
 export function setVerificationDecision(next, step, status, decidedAt = demoTimestamp()) {
   if (step === 1) {
     next.checks.kyc.status = status
-    next.checks.kyc.document = status === 'PASS' ? 'Verified' : status === 'FAIL' ? 'Not verified' : 'Pending'
-    next.checks.kyc.liveness = status === 'PASS' ? 'Verified' : status === 'FAIL' ? 'Not verified' : 'Pending'
+    if (status === 'PASS') {
+      next.checks.kyc.document = 'Verified'
+      next.checks.kyc.liveness = 'Verified'
+    }
+    if (status === 'FAIL') {
+      next.checks.kyc.document = 'Not verified'
+      next.checks.kyc.liveness = 'Not verified'
+    }
   }
   if (step === 2) {
     next.checks.aml.status = status
